@@ -76,6 +76,8 @@ ban-relative-imports = "all"
 
 [tool.mypy]
 strict = true
+native_parser = true
+num_workers = 4
 files = ["src", "tests", "tools"]
 mypy_path = "src"
 
