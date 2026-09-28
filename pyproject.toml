@@ -17,8 +17,14 @@ license = "GPL-3.0-or-later"
 license-files = ["LICENSES/*.txt"]
 authors = [{ name = "Stefan Tatschner", email = "stefan.tatschner@mailbox.org" }]
 requires-python = ">=3.14"
+# PyGObject and pycairo: built from PyPI by `uv sync` (they have no wheels
+# for Linux), or those of the distribution (`just venv`, see README). At
+# least those of Fedora 44. uv.lock has those of Debian forky, so that the
+# CI tests them: pycairo 1.29.1, and PyGObject 3.56.3 for forky's 3.57.1
+# (a development release, not on PyPI; 3.58.0 would be newer).
 dependencies = [
-  "PyGObject>=3.50",
+  "PyGObject>=3.56.3",
+  "pycairo>=1.28",
 ]
 
 [project.urls]
@@ -43,19 +49,13 @@ dev = [
   "pytest>=8",
   "reuse>=6.2.0",
   "ruff>=0.11",
+  "rust-just>=1.38",
   "ty>=0.0.1a1",
 ]
 
 [tool.uv.build-backend]
 # the application loads the .ui files compiled from them
 wheel-exclude = ["**/*.blp"]
-
-[tool.uv]
-# PyGObject and pycairo are taken from the distribution (python3-gobject,
-# python3-cairo); building them from source needs the C development
-# headers. Create the environment with
-# `uv venv --system-site-packages` so the system packages are visible.
-exclude-dependencies = ["pygobject", "pycairo"]
 
 # type stubs for GTK 4 (pygobject-stubs defaults to GTK 3)
 [tool.uv.config-settings-package]

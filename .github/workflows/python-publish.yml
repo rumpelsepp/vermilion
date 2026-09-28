@@ -24,31 +24,26 @@ jobs:
   build:
     needs: [linters, tests]
     runs-on: ubuntu-latest
-    # blueprint-compiler needs PyGObject and the GTK 4 and libadwaita
-    # typelibs
+    # blueprint-compiler needs PyGObject and the typelibs of GTK 4 and
+    # libadwaita
     container: debian:trixie
 
     steps:
       - uses: actions/checkout@v7
 
+      # the pinned Python (.python-version)
       - uses: ./.github/actions/setup
-        with:
-          python-version: "3.14"
 
       # the package contains the .ui files compiled from the Blueprint files
       - name: Build the package
-        env:
-          UV_PYTHON_PREFERENCE: only-managed
-          # PyGObject for blueprint-compiler, built for this Python (see tests.yml)
-          UV_RUN_ARGS: --locked --with pygobject --with pycairo
-        run: just build
+        run: uv run just build
 
       - uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/
 
-  # on the runner itself: the publish action runs a container of its own
+  # only this job may publish (trusted publishing)
   publish:
     needs: [build]
     runs-on: ubuntu-latest

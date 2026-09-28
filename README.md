@@ -36,21 +36,42 @@ demos can be simulated, though).
 
 ## Running from the source tree
 
+PyGObject and pycairo have no wheels for Linux: `uv sync` builds them
+from PyPI (as the CI does), which needs a compiler and their C headers
+(`python3-devel` only for the Python of the distribution, uv's own
+Pythons have their headers):
+
 ```sh
-uv venv --system-site-packages   # PyGObject comes from the system
+sudo dnf install gcc pkgconf-pkg-config glib2-devel cairo-gobject-devel python3-devel
 uv sync
-just blueprints                  # compile the user interface
+uv run just blueprints           # compile the user interface
 uv run vermilion
 ```
+
+On Debian and Ubuntu: `build-essential pkg-config libgirepository-2.0-dev
+libcairo2-dev`.
+
+Without building them, `just venv` creates an environment with those of
+the distribution (and its Python) and all the other dependencies:
+
+```sh
+just venv
+. .venv/bin/activate
+just blueprints
+vermilion
+```
+
+In it, run the tools directly (not with `uv run` or `uv sync`, which
+would build PyGObject and pycairo).
 
 Simulated interfaces can be opened from `.state` files:
 
 ```sh
-uv run vermilion demo/"Scarlett Gen 4 18i20.state"
+vermilion demo/"Scarlett Gen 4 18i20.state"
 ```
 
 `vermilion-config` loads a saved `.conf` configuration into a device
-from the command line (`uv run vermilion-config --help`).
+from the command line (`vermilion-config --help`).
 
 Log messages go to the journal (or stderr); debug messages are shown
 with `G_MESSAGES_DEBUG=vermilion`.
@@ -72,7 +93,8 @@ The defaults are `~/.local/state`, `~/.config` and `~/.local/share`.
 
 ## Development
 
-With [just](https://just.systems/):
+With [just](https://just.systems/), in the environment of `just venv`
+(or `uv run just ...`):
 
 ```sh
 just check    # all linters and the tests
@@ -95,7 +117,7 @@ files without opening windows on the desktop (with a private GTK
 Broadway display server, `gtk4-broadwayd`):
 
 ```sh
-uv run tools/screenshot.py /tmp/shots demo/*.state
+python tools/screenshot.py /tmp/shots demo/*.state
 ```
 
 ## License
