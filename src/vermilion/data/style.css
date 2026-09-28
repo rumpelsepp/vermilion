@@ -27,6 +27,15 @@
   background-color: alpha(currentColor, 0.85);
 }
 
+/* in the dark style too a dark hole in a lighter ring (derived from the
+ * light text colour, the hole would be light and the ring hardly show) */
+@media (prefers-color-scheme: dark) {
+  .socket {
+    border-color: alpha(currentColor, 0.55);
+    background-color: alpha(black, 0.6);
+  }
+}
+
 /* no longer than a line of text, so that all rows are equally high */
 .socket.socket-stereo-h {
   min-width: 15px;
@@ -49,6 +58,15 @@
 .socket:drop(active) {
   border-color: var(--accent-color);
   background-color: alpha(currentColor, 0.85);
+}
+
+/* in the dark style too a dark hole in a lighter ring (derived from the
+ * light text colour, the hole would be light and the ring hardly show) */
+@media (prefers-color-scheme: dark) {
+  .socket {
+    border-color: alpha(currentColor, 0.55);
+    background-color: alpha(black, 0.6);
+  }
 }
 
 /* The routing area draws its own drop feedback (lines) */

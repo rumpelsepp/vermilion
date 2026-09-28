@@ -9,7 +9,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from gi.repository import Adw, Gdk, Gio, GLib, Gtk
+from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk
 
 from vermilion import log
 from vermilion.core.manager import CardManager
@@ -64,6 +64,15 @@ class Application(Adw.Application):
         Gtk.Window.set_default_icon_name(APP_ICON)
 
         css = Gtk.CssProvider()
+        # the media queries of style.css (dark style, high contrast) follow
+        # the settings, as libadwaita's own style sheet does
+        settings = Gtk.Settings.get_for_display(display)
+        for setting, prop in (
+            ("gtk-interface-color-scheme", "prefers-color-scheme"),
+            ("gtk-interface-contrast", "prefers-contrast"),
+            ("gtk-interface-reduced-motion", "prefers-reduced-motion"),
+        ):
+            settings.bind_property(setting, css, prop, GObject.BindingFlags.SYNC_CREATE)
         css.load_from_path(data_path("style.css"))
         Gtk.StyleContext.add_provider_for_display(
             display,
